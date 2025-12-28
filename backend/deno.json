@@ -1,0 +1,10 @@
+{
+  "tasks": {
+    "start": "deno run --allow-net --allow-read --allow-write --allow-env --unstable-kv server.ts",
+    "dev": "deno run --watch --allow-net --allow-read --allow-write --allow-env --unstable-kv server.ts"
+  },
+  "imports": {
+    "@oak/oak": "jsr:@oak/oak@^17.0.0",
+    "cheerio": "npm:cheerio@^1.0.0-rc.12"
+  }
+}
