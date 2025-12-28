@@ -3,7 +3,11 @@ import './style.css'
 import { createIcons, LayoutGrid, ExternalLink, Copy, Check, X, Sun, Moon, FileText, Link, Rss, Scan } from 'lucide';
 
 // API 基础地址
-const API_BASE = 'http://localhost:8000';
+// 自动判断当前环境：如果是生产环境（非 localhost），使用相对路径或当前域名
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+  ? 'http://localhost:8000' 
+  : ''; 
+
 
 // 卡片接口定义
 interface Card {
