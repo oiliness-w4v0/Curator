@@ -1,5 +1,3 @@
-/// <reference lib="deno.unstable" />
-
 // 初始化 Deno KV 数据库
 // Deno Deploy 会自动处理持久化
 // 本地运行时，如果不指定 path，数据会存储在临时目录

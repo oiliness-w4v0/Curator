@@ -1,7 +1,7 @@
 {
   "tasks": {
-    "start": "deno run --allow-net --allow-read --allow-write --allow-env --unstable-kv server.ts",
-    "dev": "deno run --watch --allow-net --allow-read --allow-write --allow-env --unstable-kv server.ts"
+    "start": "deno run --allow-net --allow-read --allow-write --allow-env --unstable server.ts",
+    "dev": "deno run --watch --allow-net --allow-read --allow-write --allow-env --unstable server.ts"
   },
   "imports": {
     "@oak/oak": "jsr:@oak/oak@^17.0.0",
