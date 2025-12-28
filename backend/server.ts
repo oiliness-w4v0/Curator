@@ -3,7 +3,7 @@ import { Application, Router } from "@oak/oak";
 import { oakCors } from "https://deno.land/x/cors/mod.ts";
 import * as cheerio from "cheerio";
 import { getCards, upsertCard, deleteCard, Card, getConnections, addConnection, deleteConnection, Connection, getSettings, saveSettings } from "./db.ts";
-import { join } from "https://deno.land/std@0.224.0/path/mod.ts";
+import { join, dirname, fromFileUrl } from "https://deno.land/std@0.224.0/path/mod.ts";
 
 const app = new Application();
 const router = new Router();
@@ -254,11 +254,14 @@ app.use(router.routes());
 app.use(router.allowedMethods());
 
 // 静态文件服务：服务前端构建产物 (dist)
-// 假设前端构建在 ../frontend/dist
+// 动态计算 frontend/dist 的绝对路径
+const __dirname = dirname(fromFileUrl(import.meta.url));
+const frontendDist = join(__dirname, "../frontend/dist");
+
 app.use(async (ctx, next) => {
   try {
     await ctx.send({
-      root: join(Deno.cwd(), "../frontend/dist"),
+      root: frontendDist,
       index: "index.html",
     });
   } catch {
