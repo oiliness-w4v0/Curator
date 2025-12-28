@@ -1,6 +1,6 @@
 import './style.css'
 // import { BackgroundSystem } from './particles'; // Removed
-import { createIcons, LayoutGrid, ExternalLink, Copy, Check, X, Sun, Moon, FileText, Link, Rss } from 'lucide';
+import { createIcons, LayoutGrid, ExternalLink, Copy, Check, X, Sun, Moon, FileText, Link, Rss, Scan } from 'lucide';
 
 // API 基础地址
 const API_BASE = 'http://localhost:8000';
@@ -40,6 +40,9 @@ app.innerHTML = `
     <div id="global-toolbar">
         <button class="toolbar-btn" id="btn-arrange-all">
             <i data-lucide="layout-grid"></i> 整理
+        </button>
+        <button class="toolbar-btn" id="btn-fit-screen">
+            <i data-lucide="scan"></i> 适配
         </button>
     </div>
   </div>
@@ -81,7 +84,8 @@ createIcons({
     LayoutGrid,
     X,
     Sun,
-    Moon
+    Moon,
+    Scan
   }
 });
 
@@ -90,6 +94,7 @@ const cardsLayer = document.getElementById('cards-layer') as HTMLDivElement;
 const connectionsLayer = document.getElementById('connections-layer') as unknown as SVGSVGElement;
 const selectionBox = document.getElementById('selection-box') as HTMLDivElement;
 const btnArrangeAll = document.getElementById('btn-arrange-all') as HTMLButtonElement;
+const btnFitScreen = document.getElementById('btn-fit-screen') as HTMLButtonElement;
 
 // Removed selectionToolbar definition
 const commandModal = document.getElementById('command-modal') as HTMLDivElement;
@@ -1193,6 +1198,63 @@ function autoArrangeCards() {
 btnArrangeAll.onclick = (e) => {
     e.stopPropagation(); // 防止触发画布点击
     autoArrangeCards();
+};
+
+// 适配屏幕功能
+function fitScreen() {
+    if (cards.length === 0) return;
+
+    let minX = Infinity, maxX = -Infinity;
+    let minY = Infinity, maxY = -Infinity;
+
+    // 遍历所有卡片计算边界
+    cards.forEach(card => {
+        const el = cardMap.get(card.id);
+        const w = el?.offsetWidth || 300;
+        const h = el?.offsetHeight || 240;
+        minX = Math.min(minX, card.x);
+        maxX = Math.max(maxX, card.x + w);
+        minY = Math.min(minY, card.y);
+        maxY = Math.max(maxY, card.y + h);
+    });
+
+    const padding = 50; // 留白
+    const contentW = maxX - minX;
+    const contentH = maxY - minY;
+    
+    // 如果没有有效内容，不进行操作
+    if (contentW <= 0 || contentH <= 0) return;
+
+    const screenW = window.innerWidth;
+    const screenH = window.innerHeight;
+
+    // 计算适合的缩放比例
+    const scaleX = (screenW - padding * 2) / contentW;
+    const scaleY = (screenH - padding * 2) / contentH;
+
+    // 限制最小缩放和最大缩放
+    let newScale = Math.min(scaleX, scaleY);
+    newScale = Math.min(newScale, 1.0); // 不放大超过 100%
+    newScale = Math.max(newScale, 0.1); // 不缩小超过 10%
+
+    // 计算中心偏移
+    // 内容的中心点 (在 scale=1 的世界里)
+    const contentCenterX = minX + contentW / 2;
+    const contentCenterY = minY + contentH / 2;
+
+    // 目标偏移量 = 屏幕中心 - 内容中心 * 缩放比例
+    offsetX = (screenW / 2) - contentCenterX * newScale;
+    offsetY = (screenH / 2) - contentCenterY * newScale;
+    scale = newScale;
+
+    updateTransform();
+    saveStateDebounced();
+    updateToolbar();
+}
+
+btnFitScreen.onclick = (e) => {
+    e.stopPropagation();
+    fitScreen();
 };
 
 // 事件监听器
