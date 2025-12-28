@@ -210,8 +210,10 @@ function createCardElement(card: Card) {
   const el = document.createElement('div');
   el.className = `card ${selectedCardIds.has(card.id) ? 'selected' : ''}`;
   el.id = card.id;
-  el.style.left = `${card.x}px`;
-  el.style.top = `${card.y}px`;
+  // 使用 transform 定位
+  el.style.transform = `translate3d(${card.x}px, ${card.y}px, 0)`;
+  el.style.left = '0';
+  el.style.top = '0';
 
   // 内容渲染
   const content = document.createElement('div');
@@ -508,8 +510,8 @@ function renderCards() {
       const el = cardMap.get(card.id)!;
       // 仅在非拖拽时更新位置，避免抖动 (拖拽时直接操作 DOM)
       if (!isDraggingCard || draggedCardId !== card.id) {
-          el.style.left = `${card.x}px`;
-          el.style.top = `${card.y}px`;
+          // 使用 transform 代替 left/top 以配合硬件加速和避免布局抖动
+          el.style.transform = `translate3d(${card.x}px, ${card.y}px, 0)`;
       }
       
       if (selectedCardIds.has(card.id)) el.classList.add('selected');
@@ -1260,8 +1262,7 @@ window.onmousemove = (e) => {
         
         const el = cardMap.get(draggedCardId!);
         if (el) {
-            el.style.left = `${card.x}px`;
-            el.style.top = `${card.y}px`;
+            el.style.transform = `translate3d(${card.x}px, ${card.y}px, 0)`;
         }
     }
     
