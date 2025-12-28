@@ -126,8 +126,6 @@ body {
   height: 100%;
   transform-origin: 0 0;
   transform: translate3d(0, 0, 0);
-  /* 优化图层渲染，减少模糊 */
-  will-change: transform;
 }
 
 #cards-layer {
@@ -213,8 +211,6 @@ body {
   /* 必须使用 non-scaling-stroke 才能保证缩放时线条粗细一致 */
   vector-effect: non-scaling-stroke;
   pointer-events: none;
-  /* 优化渲染 */
-  will-change: stroke, stroke-width;
 }
 
 .connection-group:hover .connection-line {
@@ -252,9 +248,8 @@ body {
   -webkit-backdrop-filter: none;
   display: flex;
   flex-direction: column;
-  /* Hardware acceleration for smoother movement */
-  will-change: transform;
   z-index: 1; /* Default z-index */
+  /* Remove will-change to prevent flickering/performance issues */
 }
 
 .card:hover {
@@ -283,9 +278,6 @@ body {
   white-space: pre-wrap;
   flex: 1;
   font-weight: 400;
-  /* 抗锯齿优化 */
-  -webkit-font-smoothing: subpixel-antialiased;
-  -moz-osx-font-smoothing: auto;
 }
 
 .card-image {
