@@ -650,6 +650,8 @@ body {
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  /* 确保卡片内容不触发独立的合成层，避免模糊 */
+  transform: translateZ(0);
 }
 
 .rss-header {
@@ -659,11 +661,13 @@ body {
   padding-bottom: 12px;
   border-bottom: 1px solid var(--card-border);
   margin-bottom: 12px;
+  flex-shrink: 0; /* 防止 header 被压缩 */
 }
 
 .rss-icon {
   color: var(--selection-color);
   display: flex;
+  flex-shrink: 0;
 }
 
 .rss-title {
@@ -683,6 +687,10 @@ body {
   flex-direction: column;
   gap: 12px;
   padding-right: 4px;
+  /* 优化滚动容器的渲染 */
+  -webkit-overflow-scrolling: touch;
+  /* 强制应用硬件加速，但限制在容器级别 */
+  transform: translateZ(0);
 }
 
 .rss-list::-webkit-scrollbar {
@@ -698,6 +706,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  /* 防止列表项内部渲染问题 */
+  transform: translateZ(0);
 }
 
 .rss-item-link {
@@ -705,12 +715,15 @@ body {
   font-weight: 500;
   color: var(--text-color);
   text-decoration: none;
-  line-height: 1.3;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  line-height: 1.4; /* 增加行高提升可读性 */
+  display: block; /* 改为 block 避免 flex 布局下的某些渲染 bug */
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; /* 单行显示标题，更整洁 */
   transition: color 0.2s;
+  /* 字体渲染优化 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .rss-item-link:hover {
@@ -721,9 +734,13 @@ body {
 .rss-item-desc {
   font-size: 12px;
   color: var(--text-secondary);
-  line-height: 1.3;
+  line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  /* 字体渲染优化 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  opacity: 0.9; /* 轻微透明度有时能改善渲染 */
 }
